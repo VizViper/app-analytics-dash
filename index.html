@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Bellybutton Biodiversity</title>
+  <title>Welcome to Viz-Viper!</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -21,8 +22,16 @@
     <div class="row">
       <div class="col-md-2">
         <div class="well">
-          <h5>Publisher Name:</h5>
-          <select id="selDataset" onchange="optionChanged(this.value)"></select>
+            <h5>Platform:</h5>
+            <select id="platformSelection" onchange = "platformSelect(this.value)">
+                <option disabled selected value>-- choose one --</option>
+                <option value = "ios">iOS</option>
+                <option value = "android">Android</option>
+            </select>
+            <div class="publishdiv">
+                <h5>Publisher Name:</h5>
+                <select id="selDataset" onchange="optionChanged(this.value)"></select>
+            </div>
         </div>
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -55,7 +64,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="./static/js/app.js"></script>
+  <script src="assets/js/app.js"></script>
   <!--<script src="./static/js/bonus.js"></script>-->
   <script src="samples.json"></script>
   
