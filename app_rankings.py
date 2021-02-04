@@ -18,11 +18,11 @@ Base.prepare(engine, reflect=True)
 Base.classes.keys()
 
 # Save reference to the tables
-category = Base.classes.category
-application = Base.classes.application
-publisher = Base.classes.publisher
-ranking = Base.classes.ranking
-platform = Base.classes.platform
+Category = Base.classes.category
+Application = Base.classes.application
+Publisher = Base.classes.publisher
+Ranking = Base.classes.ranking
+Platform = Base.classes.platform
 
 #################################################
 # Flask Setup
@@ -50,8 +50,8 @@ def app_rankings_data():
 
     """Return a list of all app ranking data"""
     # Query all passengers
-    sel = [platform.platform, publisher.publisher_name, application.app_name, ranking.date, category.category, ranking.rank]
-    giant_query = session.query(*sel).filter(ranking.app_id == application.app_id).filter(ranking.category_id == category.category_id).filter(ranking.platform_id == platform.platform_id).filter(application.publisher_id == publisher.publisher_id).order_by(platform.platform).order_by(publisher.publisher_name).order_by(application.app_name).order_by(ranking.date).order_by(category.category).order_by(ranking.rank).limit(50).all()
+    sel = [Platform.platform, Publisher.publisher_name, Application.app_name, Ranking.date, Category.category, Ranking.rank]
+    giant_query = session.query(*sel).filter(Ranking.app_id == Application.app_id).filter(Ranking.category_id == Category.category_id).filter(Ranking.platform_id == Platform.platform_id).filter(Application.publisher_id == Publisher.publisher_id).filter(Category.category_id == 2).order_by(Platform.platform).order_by(Publisher.publisher_name).order_by(Application.app_name).order_by(Ranking.date).order_by(Category.category).order_by(Ranking.rank).limit(50).all()
     
     # Create a dictionary from the row data and append to a list of all_passengers
     all_apps = []
