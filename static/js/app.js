@@ -1,6 +1,6 @@
 function init(){
-    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
-        var name = incomingdata[0].app[0].date;
+    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+        var name = incomingdata[0].platform;
         console.log(name);
         // var metadata = incomingdata[0].metadata;
         // //console.log(metadata);
@@ -21,7 +21,7 @@ function init(){
     });
 };
 
-init();
+//init();
 
 
 // d3.selectAll("#selDataset").on("change", optionChanged);
@@ -71,23 +71,22 @@ function bubblegraph(value){
     Plotly.newPlot("bubble", chartdata);
 };
 
-function createmeta(value){
-    var list = d3.select(".panel-body");
-    list.html("");
-    list.append("li").text(`${Object.keys(value)[0]}: ${Object.values(value)[0]}`);
-    list.append("li").text(`${Object.keys(value)[1]}: ${Object.values(value)[1]}`);
-    list.append("li").text(`${Object.keys(value)[2]}: ${Object.values(value)[2]}`);
-    list.append("li").text(`${Object.keys(value)[3]}: ${Object.values(value)[3]}`);
-    list.append("li").text(`${Object.keys(value)[4]}: ${Object.values(value)[4]}`);
-    list.append("li").text(`${Object.keys(value)[5]}: ${Object.values(value)[5]}`);
-    list.append("li").text(`${Object.keys(value)[6]}: ${Object.values(value)[6]}`);
-
-};
 
 d3.selectAll("#platformSelection").on("change", platformSelect);
 function platformSelect(){
     var dropdown = d3.select("#platformSelection");
     var dataset = dropdown.property("value");
-    console.log(dataset);
-    d3.select(".publishdiv").style("display","block");
+    //console.log(dataset);
+    var selectedPlatform = d3.select(".publishdiv");
+    selectedPlatform.style("display","block");
+    var choice = selectedPlatform.select("#selDataset");
+    choice.selectAll("option").remove();
+    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+        //console.log(dataset);
+        for (var i = 0; i < incomingdata.length; i++){
+            if(incomingdata[i].platform == dataset){
+                choice.append("option").attr("value", incomingdata[i].publisher_name).text(incomingdata[i].publisher_name);
+            };
+        };
+    });
 };
