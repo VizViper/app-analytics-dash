@@ -1,5 +1,5 @@
 function init(){
-    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         var name = incomingdata[0].platform;
         console.log(name);
         // var metadata = incomingdata[0].metadata;
@@ -82,7 +82,7 @@ function platformSelect(){
     selectedPlatform.style("display","block");
     var choice = selectedPlatform.select("#selDataset");
     choice.selectAll("option").remove();
-    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         //console.log(dataset);
         choice.html("<option disabled selected value>-- choose one --</option>");
         for (var i = 0; i < incomingdata.length; i++){
@@ -100,18 +100,57 @@ function optionChanged(){
     var platformselection = d3.select("#platformSelection").property("value");
     var publisherselection = d3.select("#selDataset").property("value");
     d3.select("tbody").selectAll("tr").remove();
-    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         for (var i = 0; i < incomingdata.length; i++){
             if(incomingdata[i].platform == platformselection && incomingdata[i].publisher_name == publisherselection){
                 //console.log(incomingdata[i].app[1].app_name);
                 makeTable(incomingdata[i].app)
-                currentQ(incomingdata[i].app);
+                var seriesData = createSeries(incomingdata[i].app);
                 // for (var j = 0; j < incomingdata[i].app.length; j++){
                 //     console.log(incomingdata[i].app[j].app_name);
                 //     console.log(incomingdata[i].app[j].date);
                 //};
             };
         };
+    // CHART CONFIG
+// -----------------------------
+let myConfig = {
+    type: 'line',
+    title: {
+      text: publisherselection,
+      fontSize: 24,
+    },
+    legend: {
+      draggable: true,
+    },
+    scaleX: {
+      // Set scale label
+      label: { text: 'Date' },
+      // Convert text on scale indices
+      labels: [ '2021-01-26', '2021-01-27']
+    },
+    scaleY: {
+        mirrored: true,
+      // Scale label with unicode character
+      label: { text: 'Grossing Ranking' }
+    },
+    plot: {
+      // Animation docs here:
+      // https://www.zingchart.com/docs/tutorials/styling/animation#effect
+      animation: {
+        effect: 'ANIMATION_EXPAND_BOTTOM',
+        method: 'ANIMATION_STRONG_EASE_OUT',
+        sequence: 'ANIMATION_BY_NODE',
+        speed: 275,
+      }
+    },
+    series: seriesData
+  };
+  // Render Method[3]
+zingchart.render({
+    id: 'myChart',
+    data: myConfig,
+  });
     });
 };
 
@@ -126,20 +165,23 @@ function optionChanged(){
 
 // Function for calculating the current quarter average ranking
 function currentQ(appData){
+    var returnSeries = []
     for (var j = 0; j < appData.length; j++){
-        console.log(appData[j])
-        for (var k = 0; k < appData[j].date.length; k++){
-            console.log(appData[j].date[k])
-            console.log(dateParser(appData[j].date[k].date))
-            console.log(appData[j].date[k].Grossing)
-        };
-};};
+        returnSeries.push(appData[j].date[appData[j].date.length - 1]);
+        // for (var k = 0; k < appData[j].date.length; k++){
+        //     console.log(appData[j].date[k])
+        //     console.log(dateParser(appData[j].date[k].date))
+        //     console.log(appData[j].date[k].Grossing)
+        // };
+    };
+    return returnSeries;
+};
 
 // d3.max(hairData, d => d.num_hits
 
 
 // When the browser loads, makeResponsive() is called.
-makeResponsive();
+//makeResponsive();
 
 // When the browser window is resized, makeResponsive() is called.
 d3.select(window).on("resize", makeResponsive);
@@ -147,10 +189,43 @@ d3.select(window).on("resize", makeResponsive);
 function makeTable(Data){
     //var publisherName = Data[0].app_name;
     //console.log(publisherName);
+    //console.log(Data);
     d3.select("tbody").selectAll("tr")
     .data(Data)
     .enter() // creates placeholder for new data
     .append("tr") // appends a div to placeholder
     .html(function(d) {
-        return `<td>${d.app_name}</td><td>${d.app_name}</td>`});  // sets the html in the div to an image tag with the link
+        return `<td>${d.app_name}</td><td>${d.date[d.date.length-1].date}</td><td>${d.date[d.date.length-1].Grossing}</td>`});  // sets the html in the div to an image tag with the link
+};
+
+function createSeries(dataSeries){
+    var backColors = ['#E34247','#FEB32E', '#31A59A', '#6A0DAD', '#FF007F']
+    var seriesResult = [];
+    var arrayLength = dataSeries.length;
+    for (var i = 0; i < arrayLength; i++) {
+        var dataDict = dataSeries[i];
+        var app_name = dataDict['app_name'];
+        var rank_date = dataDict['date'];
+        var value = [];
+        if (rank_date[0]['date'] == "2021-01-27" ){
+            value.push(null);
+            value.push(+rank_date[0]['Grossing']);
+        }
+        else if (rank_date[0]['date'] == "2021-01-26" && rank_date.length < 2){
+            value.push(+rank_date[0]['Grossing']);
+            value.push(null);
+        }
+        else {
+            for (var j = 0; j < 2; j++) {
+                value.push(+rank_date[j]['Grossing']);
+            };
+        };
+        var lineColor =  backColors[i];
+        var marker = {'backgroundColor': backColors[i]};
+        var text = app_name;
+        var unit_dict = {'values': value, 'text':text};
+        seriesResult.push(unit_dict);
+    };
+    return seriesResult
+
 };
