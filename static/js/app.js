@@ -23,6 +23,7 @@ function init(){
 
 //init();
 
+var dateParser = d3.timeParse("%Y-%m-%d");
 
 // d3.selectAll("#selDataset").on("change", optionChanged);
 // function optionChanged(){
@@ -98,8 +99,19 @@ d3.selectAll("#selDataset").on("change", optionChanged);
 function optionChanged(){
     var platformselection = d3.select("#platformSelection").property("value");
     var publisherselection = d3.select("#selDataset").property("value");
-    console.log(platformselection);
-    console.log(publisherselection);
+    d3.select("tbody").selectAll("tr").remove();
+    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+        for (var i = 0; i < incomingdata.length; i++){
+            if(incomingdata[i].platform == platformselection && incomingdata[i].publisher_name == publisherselection){
+                //console.log(incomingdata[i].app[1].app_name);
+                makeTable(incomingdata[i].app);
+                // for (var j = 0; j < incomingdata[i].app.length; j++){
+                //     console.log(incomingdata[i].app[j].app_name);
+                //     console.log(incomingdata[i].app[j].date);
+                //};
+            };
+        };
+    });
 };
 
 // Function for appending rows and columns to table based on filtered applications
@@ -117,3 +129,13 @@ makeResponsive();
 // When the browser window is resized, makeResponsive() is called.
 d3.select(window).on("resize", makeResponsive);
 
+function makeTable(Data){
+    //var publisherName = Data[0].app_name;
+    //console.log(publisherName);
+    d3.select("tbody").selectAll("tr")
+    .data(Data)
+    .enter() // creates placeholder for new data
+    .append("tr") // appends a div to placeholder
+    .html(function(d) {
+        return `<td>${d.app_name}</td><td>${d.app_name}</td>`});  // sets the html in the div to an image tag with the link
+};
