@@ -19,8 +19,8 @@
         <p>Use the interactive charts below to explore the dataset</p>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-4">
         <div class="well">
             <h5>Platform:</h5>
             <select id="platformSelection" onchange = "platformSelect(this.value)">
@@ -33,14 +33,9 @@
                 <select id="selDataset" onchange="optionChanged(this.value)"></select>
             </div>
         </div>
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Demographic Info</h3>
-          </div>
-          <div id="sample-metadata" class="panel-body"></div>
-        </div>
-      </div>
-      <div class="col-md-10">
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <table id="summary-table" class="table table-striped table-inverse">
             <thead>
               <tr>

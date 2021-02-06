@@ -90,3 +90,18 @@ function platformSelect(){
         };
     });
 };
+
+// Function for appending rows and columns to table based on filtered applications
+filteredApps.forEach((filteredApp) => {
+    var row = tbody.append("tr");
+    Object.entries(filteredApp).forEach(([key, value]) => {
+      var cell = row.append("td");
+      cell.text(value);
+    });
+  });
+
+// When the browser loads, makeResponsive() is called.
+makeResponsive();
+
+// When the browser window is resized, makeResponsive() is called.
+d3.select(window).on("resize", makeResponsive);
