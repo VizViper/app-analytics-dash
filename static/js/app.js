@@ -83,10 +83,20 @@ function platformSelect(){
     choice.selectAll("option").remove();
     d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         //console.log(dataset);
+        choice.html("<option disabled selected value>-- choose one --</option>");
         for (var i = 0; i < incomingdata.length; i++){
             if(incomingdata[i].platform == dataset){
                 choice.append("option").attr("value", incomingdata[i].publisher_name).text(incomingdata[i].publisher_name);
             };
         };
     });
+};
+
+
+d3.selectAll("#selDataset").on("change", optionChanged);
+function optionChanged(){
+    var platformselection = d3.select("#platformSelection").property("value");
+    var publisherselection = d3.select("#selDataset").property("value");
+    console.log(platformselection);
+    console.log(publisherselection);
 };
