@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 appannie.py
+appannie-cred.json

@@ -1,0 +1,8 @@
+SQLAlchemy_Utils==0.36.8
+SQLAlchemy==1.3.13
+psycopg2==2.8.6
+pandas==1.0.1
+numpy==1.18.1
+splinter==0.14.0
+beautifulsoup4==4.9.3
+python-dotenv==0.15.0
