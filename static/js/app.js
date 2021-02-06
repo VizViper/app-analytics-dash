@@ -1,5 +1,5 @@
 function init(){
-    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         var name = incomingdata[0].platform;
         console.log(name);
         // var metadata = incomingdata[0].metadata;
@@ -82,7 +82,7 @@ function platformSelect(){
     selectedPlatform.style("display","block");
     var choice = selectedPlatform.select("#selDataset");
     choice.selectAll("option").remove();
-    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         //console.log(dataset);
         choice.html("<option disabled selected value>-- choose one --</option>");
         for (var i = 0; i < incomingdata.length; i++){
@@ -100,11 +100,12 @@ function optionChanged(){
     var platformselection = d3.select("#platformSelection").property("value");
     var publisherselection = d3.select("#selDataset").property("value");
     d3.select("tbody").selectAll("tr").remove();
-    d3.json("http://127.0.0.1:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
+    d3.json("http://localhost:5000/api/v1.0/app_rankings_data").then((incomingdata)=>{
         for (var i = 0; i < incomingdata.length; i++){
             if(incomingdata[i].platform == platformselection && incomingdata[i].publisher_name == publisherselection){
                 //console.log(incomingdata[i].app[1].app_name);
-                makeTable(incomingdata[i].app);
+                makeTable(incomingdata[i].app)
+                currentQ(incomingdata[i].app);
                 // for (var j = 0; j < incomingdata[i].app.length; j++){
                 //     console.log(incomingdata[i].app[j].app_name);
                 //     console.log(incomingdata[i].app[j].date);
@@ -115,13 +116,27 @@ function optionChanged(){
 };
 
 // Function for appending rows and columns to table based on filtered applications
-filteredApps.forEach((filteredApp) => {
-    var row = tbody.append("tr");
-    Object.entries(filteredApp).forEach(([key, value]) => {
-      var cell = row.append("td");
-      cell.text(value);
-    });
-  });
+// filteredApps.forEach((filteredApp) => {
+//     var row = tbody.append("tr");
+//     Object.entries(filteredApp).forEach(([key, value]) => {
+//       var cell = row.append("td");
+//       cell.text(value);
+//     });
+//   });
+
+// Function for calculating the current quarter average ranking
+function currentQ(appData){
+    for (var j = 0; j < appData.length; j++){
+        console.log(appData[j])
+        for (var k = 0; k < appData[j].date.length; k++){
+            console.log(appData[j].date[k])
+            console.log(dateParser(appData[j].date[k].date))
+            console.log(appData[j].date[k].Grossing)
+        };
+};};
+
+// d3.max(hairData, d => d.num_hits
+
 
 // When the browser loads, makeResponsive() is called.
 makeResponsive();
