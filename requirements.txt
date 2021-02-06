@@ -6,3 +6,4 @@ numpy==1.18.1
 splinter==0.14.0
 beautifulsoup4==4.9.3
 python-dotenv==0.15.0
+pg8000==1.13.2

@@ -243,121 +243,6 @@ def make_cat():
 
 
 
-###### IMPORT DATA TO SQL ######
-
-# SHOULD MAKE db_pass an environment variable in final version
-
-#
-# engine = create_engine(f'postgresql://postgres:{db_pass}@localhost:5432/app_rankings')
-#
-# if sqlalchemy_utils.functions.database_exists(engine.url):
-#     print(sqlalchemy_utils.functions.database_exists(engine.url))
-#     pass
-# else:
-#     sqlalchemy_utils.functions.create_database(engine.url)
-#
-# df_platform.to_sql('platform',engine, if_exists='replace', index=False)
-# df_full.to_sql('ranking',engine, if_exists='replace', index=True)
-# df_publisher.to_sql('publisher',engine, if_exists='replace', index=False)
-# df_app.to_sql('application', engine, if_exists='replace', index=False)
-# df_cat.to_sql('category', engine, if_exists='replace', index=False)
-#
-# engine.execute("""
-#     ALTER TABLE
-#         platform
-#     ADD PRIMARY KEY
-#         (platform_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         category
-#     ADD PRIMARY KEY
-#         (category_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         publisher
-#     ADD PRIMARY KEY
-#         (publisher_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         application
-#     ADD PRIMARY KEY
-#         (app_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         application
-#     ADD CONSTRAINT
-#         fk_parent_category_id
-#     FOREIGN KEY
-#         (category_id)
-#     REFERENCES
-#         category
-#         (category_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         application
-#     ADD CONSTRAINT
-#         fk_parent_publisher_id
-#     FOREIGN KEY
-#         (publisher_id)
-#     REFERENCES
-#         publisher
-#         (publisher_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         ranking
-#     ADD PRIMARY KEY
-#         (index)
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         ranking
-#     ADD CONSTRAINT
-#         fk_parent_app_id
-#     FOREIGN KEY
-#         (app_id)
-#     REFERENCES
-#         application
-#         (app_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         ranking
-#     ADD CONSTRAINT
-#         fk_parent_category_id
-#     FOREIGN KEY
-#         (category_id)
-#     REFERENCES
-#         category
-#         (category_id);
-# """);
-#
-# engine.execute("""
-#     ALTER TABLE
-#         ranking
-#     ADD CONSTRAINT
-#         fk_parent_platform_id
-#     FOREIGN KEY
-#         (platform_id)
-#     REFERENCES
-#         platform
-#         (platform_id);
-# """);
-#
-
 # In[ ]:
 def main():
     browser = Browser('chrome', **executable_path, headless=True)
@@ -388,6 +273,146 @@ def main():
 
     df_platform = make_platform()
     df_cat = make_cat()
+    
+        # Remember - storing secrets in plaintext is potentially unsafe. Consider using
+    # something like https://cloud.google.com/secret-manager/docs/overview to help keep
+    # secrets secret.
+    
+
+    # Extract host and port from db_host
+   # Uncomment and set the following variables depending on your specific instance and database:
+    connection_name = "appannie-303104:us-central1:vizviper"
+    db_name = os.environ("DB_NAME")
+    db_user = os.getenv("DB_USER")
+    db_password = os.getenv("DB_PASS")
+
+# If your database is MySQL, uncomment the following two lines:
+#driver_name = 'mysql+pymysql'
+#query_string = dict({"unix_socket": "/cloudsql/{}".format(connection_name)})
+
+# If your database is PostgreSQL, uncomment the following two lines:
+    driver_name = 'postgres+pg8000'
+    query_string =  dict({"unix_sock": "/cloudsql/{}/.s.PGSQL.5432".format(connection_name)})
+
+# If the type of your table_field value is a string, surround it with double quotes.
+
+    engine = sqlalchemy.create_engine(
+      sqlalchemy.engine.url.URL(
+        drivername=driver_name,
+        username=db_user,
+        password=db_password,
+        database=db_name,
+        query=query_string,
+      ))
+    try:
+        
+    df_platform.to_sql('platform',engine, if_exists='replace', index=False)
+    df_full.to_sql('ranking',engine, if_exists='replace', index=True)
+    df_publisher.to_sql('publisher',engine, if_exists='replace', index=False)
+    df_app.to_sql('application', engine, if_exists='replace', index=False)
+    df_cat.to_sql('category', engine, if_exists='replace', index=False)
+    
+     except Exception as e:
+        return 'Error: {}'.format(str(e))
+    return 'ok'
+
+        # engine.execute("""
+    #     ALTER TABLE
+    #         platform
+    #     ADD PRIMARY KEY
+    #         (platform_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         category
+    #     ADD PRIMARY KEY
+    #         (category_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         publisher
+    #     ADD PRIMARY KEY
+    #         (publisher_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         application
+    #     ADD PRIMARY KEY
+    #         (app_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         application
+    #     ADD CONSTRAINT
+    #         fk_parent_category_id
+    #     FOREIGN KEY
+    #         (category_id)
+    #     REFERENCES
+    #         category
+    #         (category_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         application
+    #     ADD CONSTRAINT
+    #         fk_parent_publisher_id
+    #     FOREIGN KEY
+    #         (publisher_id)
+    #     REFERENCES
+    #         publisher
+    #         (publisher_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         ranking
+    #     ADD PRIMARY KEY
+    #         (index)
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         ranking
+    #     ADD CONSTRAINT
+    #         fk_parent_app_id
+    #     FOREIGN KEY
+    #         (app_id)
+    #     REFERENCES
+    #         application
+    #         (app_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         ranking
+    #     ADD CONSTRAINT
+    #         fk_parent_category_id
+    #     FOREIGN KEY
+    #         (category_id)
+    #     REFERENCES
+    #         category
+    #         (category_id);
+    # """);
+    #
+    # engine.execute("""
+    #     ALTER TABLE
+    #         ranking
+    #     ADD CONSTRAINT
+    #         fk_parent_platform_id
+    #     FOREIGN KEY
+    #         (platform_id)
+    #     REFERENCES
+    #         platform
+    #         (platform_id);
+    # """);
+    #
+
+
 
 if __name__ == '__main__':
     main()
