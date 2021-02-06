@@ -9,7 +9,7 @@ from flask import Flask, jsonify, render_template
 #################################################
 # Database Setup
 #################################################
-engine = create_engine("postgresql://postgres:postgres@localhost:5432/app_rankings")
+engine = create_engine("postgresql://postgres:soemace123@localhost:5432/app_rankings")
 
 # reflect an existing database into a new model
 Base = automap_base()
